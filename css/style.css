@@ -1,0 +1,84 @@
+header{
+   
+    margin-bottom: 40px;
+
+}
+#title-a{
+    font-size: 28px;
+    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    color: #b5e853;
+    text-shadow: 0 3px 3px rgba(0,0,0,0.1),
+    0 0 5px rgba(181,232,83,0.1),
+    0 0 10px rgba(181,232,83,0.1); 
+      
+
+}
+
+#whoami_{
+    font-size: 20px;
+    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    
+    color: #666;
+    text-shadow: 0 2px 2px rgba(0,0,0,0.1),
+    0 0 5px rgba(181,232,83,0.1),
+    0 0 10px rgba(181,232,83,0.1); ;
+    
+
+}
+
+body{
+    background-color: hsl(0deg 0% 12%);
+}
+
+#main_cont{
+    font-size: 18px;
+    font-weight: normal;
+    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    
+}
+
+#whoami-{
+    font-size: 27px;
+    font-weight: normal;
+    font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+    color: #b5e853;
+
+
+}
+
+#mrrobot{
+    
+    height: auto;
+    width: 200px;
+}
+
+
+
+a{
+    height: 30px;
+    color: #63c0f5;
+    text-shadow: 0 0 5px rgba(104,182,255,0.5);
+    font-weight: bolder;
+    font-size: 18px;
+    
+
+}
+ul{
+    
+    margin-left: 0;
+    padding-left: 0;
+}
+li{
+    list-style: none;
+   
+}
+li:before{
+    
+    content: ">> ";
+    color: #b5e853;
+    text-shadow: 0 2px 2px rgba(0,0,0,0.1),
+    0 0 5px rgba(181,232,83,0.1),
+    0 0 10px rgba(181,232,83,0.1); ;
+ 
+}
+
