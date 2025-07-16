@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tasarruf Yarışı</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #000010, #0d0c1a, #1a1440);
+      background-attachment: fixed;
+      background-repeat: no-repeat;
+      text-align: center;
+      overflow-x: hidden;
+      color: #eee;
+      user-select: none;
+      position: relative;
+      min-height: 100vh;
+      padding: 20px 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(white 1px, transparent 1px);
+      background-size: 3px 3px;
+      opacity: 0.04;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 15px 0;
+      font-size: 32px;
+      color: #e74c3c;
+      text-shadow: 0 0 6px #e74c3caa;
+      padding: 0 15px;
+      line-height: 1.3;
+    }
+
+    .track-container {
+      width: 100%;
+      margin: 30px 0;
+      padding: 0 15px;
+    }
+
+    .track {
+      position: relative;
+      height: 120px;
+      background: repeating-linear-gradient(
+        90deg,
+        #2c2c2c 0px,
+        #2c2c2c 10px,
+        #2a2a2a 10px,
+        #2a2a2a 20px
+      );
+      border-radius: 20px;
+      width: 100%;
+      box-shadow:
+        0 0 25px rgba(255, 255, 255, 0.05),
+        inset 0 0 20px rgba(255, 255, 255, 0.07),
+        inset 0 0 60px rgba(255, 0, 0, 0.04);
+      overflow: hidden;
+    }
+
+    .track::before{
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: repeating-linear-gradient(
+        to right,
+        yellow,
+        yellow 15px,
+        transparent 15px,
+        transparent 30px
+      );
+      transform: translateY(-50%);
+      z-index: 1;
+      opacity: 0.4;
+    }
+
+    .motor {
+      position: absolute;
+      left: 0;
+      top: 15px;
+      width: 100px;
+      transition: left 0.3s ease;
+      z-index: 3;
+      filter: drop-shadow(0 5px 3px rgba(0,0,0,0.6));
+    }
+    
+    .motor::after{
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 15px;
+      width: 70%;
+      height: 12px;
+      background: radial-gradient(ellipse at center, rgba(255, 50, 50, 0.4), transparent 80%);
+      filter: blur(3px);
+      z-index: -1;
+    }
+
+    .motor.animate {
+      animation-name: vibrate;
+      animation-iteration-count: infinite;
+      animation-timing-function: linear;
+    }
+
+    @keyframes vibrate {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(1px, -1px); }
+      50% { transform: translate(-1px, 1px); }
+      75% { transform: translate(1px, 1px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    /* Duman efekti */
+    .smoke {
+      position: absolute;
+      bottom: 0;
+      width: 18px;
+      height: 22px;
+      background: rgba(180, 180, 180, 0.3);
+      border-radius: 50%;
+      animation: smokeAnim 1.2s forwards;
+      z-index: 2;
+      filter: blur(1.2px);
+      opacity: 0.6;
+    }
+
+    @keyframes smokeAnim {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-50px) scale(2.5);
+        opacity: 0;
+      }
+    }
+
+    /* Toz efekti */
+    .dust {
+      position: absolute;
+      bottom: 10px;
+      width: 8px;
+      height: 8px;
+      background: rgba(200, 180, 140, 0.5);
+      border-radius: 50%;
+      filter: blur(1px);
+      animation: dustAnim 1.5s forwards;
+      z-index: 0;
+      opacity: 0.6;
+    }
+
+    @keyframes dustAnim {
+      0% {
+        transform: translateX(0) translateY(0) scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateX(-15px) translateY(-20px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* Finish çizgisi */
+    .finish-line {
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 12px;
+      background: repeating-linear-gradient(
+        45deg,
+        black,
+        black 5px,
+        white 5px,
+        white 10px
+      );
+      z-index: 4;
+      box-shadow: 0 0 6px #fff8 inset;
+      border-radius: 0 20px 20px 0;
+      transition: box-shadow 0.4s ease;
+    }
+
+    /* Input ve buton */
+    .input-container {
+      width: 100%;
+      max-width: 500px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      padding: 0 15px;
+    }
+
+    input[type="number"] {
+      padding: 14px 16px;
+      width: 100%;
+      font-size: 18px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+      border: 2px solid #555;
+      background: #111;
+      color: #eee;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #e74c3c;
+      box-shadow: 0 0 12px #e74c3caa;
+    }
+
+    .buttons-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 16px 30px;
+      font-size: 18px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      user-select: none;
+      flex: 1;
+      min-width: 140px;
+      max-width: 220px;
+    }
+    
+    button:hover {
+      background-color: #ff4d4d;
+      box-shadow: 0 0 16px #ff4d4dbb;
+      transform: scale(1.05);
+    }
+    
+    button:active {
+      box-shadow: inset 0 0 7px #b33535;
+      transform: scale(0.98);
+    }
+
+    .counter {
+      margin-top: 20px;
+      font-size: 22px;
+      font-weight: 500;
+      color: #fff;
+      text-shadow: 0 0 6px #0008;
+      padding: 0 15px;
+    }
+
+    .progress-container {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 15px;
+      padding: 0 15px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 16px;
+      background: #222;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 10px;
+      box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #e74c3c, #ff6b6b);
+      border-radius: 8px;
+      width: 0%;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+    }
+
+    .progress-info {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #bbb;
+      text-shadow: 0 0 3px #0005;
+      font-weight: 500;
+    }
+
+    .reset-btn {
+      margin-top: 25px;
+      background-color: #444;
+      padding: 14px 28px;
+      font-size: 17px;
+      border-radius: 12px;
+      user-select: none;
+      transition: all 0.3s ease;
+      border: none;
+      color: #eee;
+      cursor: pointer;
+      max-width: 300px;
+    }
+    
+    .reset-btn:hover {
+      background-color: #666;
+    }
+    
+    .reset-btn:active {
+      background-color: #333;
+    }
+
+    .goal-info {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 15px;
+      margin: 15px 0;
+      width: 100%;
+      max-width: 500px;
+      font-size: 18px;
+    }
+    
+    .goal-info span {
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (min-width: 768px) {
+      h1 {
+        font-size: 42px;
+        margin: 30px 0;
+      }
+      
+      .track {
+        height: 150px;
+        border-radius: 25px;
+      }
+      
+      .motor {
+        width: 140px;
+        top: 10px;
+      }
+      
+      .input-container {
+        flex-direction: row;
+        gap: 15px;
+      }
+      
+      input[type="number"] {
+        width: 180px;
+        margin-bottom: 0;
+      }
+      
+      .buttons-container {
+        margin-top: 0;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .motor {
+        width: 180px;
+        top: 1px;
+      }
+      
+      button {
+        min-width: 160px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Hoşgeldin Gaye</h1>
+
+    <div class="track-container">
+      <div class="track">
+        <img src="https://freepngimg.com/thumb/motorcycle/16-red-moto-png-image-red-motorcycle-png-.png" alt="motor" class="motor" id="motor" />
+        <div class="finish-line"></div>
+      </div>
+    </div>
+
+    <div class="counter" id="counter">Biriken tutar: 0 TL</div>
+    
+    <div class="progress-container">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-info" id="progressInfo">%0 tamamlandı - %100 kaldı</div>
+    </div>
+
+    <div class="input-container">
+      <input type="number" id="amount" placeholder="" inputmode="numeric" />
+      
+      <div class="buttons-container">
+        <button onclick="moveMotor()">Tasarruf Ekle</button>
+      </div>
+    </div>
+
+    <button class="reset-btn" onclick="resetProgress()">Sıfırla</button>
+  </div>
+
+  <script>
+    const max = 160000;
+    const motor = document.getElementById('motor');
+    const counter = document.getElementById('counter');
+    const progressInfo = document.getElementById('progressInfo');
+    const progressFill = document.getElementById('progressFill');
+    let smokeInterval = null;
+    let dustInterval = null;
+
+    // localStorage'dan yükle (varsa)
+    let total = parseInt(localStorage.getItem('motorTotal')) || 0;
+
+    // Sayfa yüklendiğinde pozisyonu güncelle
+    window.onload = () => {
+      updatePosition();
+      if(total > 0) {
+        motor.classList.add("animate");
+        startSmoke();
+        startDust();
+      }
+      
+      // Inputa otomatik odaklan
+      setTimeout(() => {
+        document.getElementById('amount').focus();
+      }, 500);
+    };
+
+    function moveMotor() {
+      const input = document.getElementById('amount');
+      let value = parseInt(input.value);
+
+      if (!isNaN(value) && value > 0) {
+        total += value;
+        if(total > max) total = max; // sınırla
+
+        localStorage.setItem('motorTotal', total); // kaydet
+
+        updatePosition();
+        input.value = "";
+      } else {
+        // Geçersiz giriş uyarısı
+        input.style.borderColor = "#ff0000";
+        input.style.boxShadow = "0 0 12px rgba(255, 0, 0, 0.5)";
+        setTimeout(() => {
+          input.style.borderColor = "#555";
+          input.style.boxShadow = "none";
+        }, 1000);
+      }
+    }
+    
+    function addRandomAmount() {
+      const randomAmount = Math.floor(Math.random() * 10000) + 1000;
+      document.getElementById('amount').value = randomAmount;
+      moveMotor();
+    }
+
+    function updatePosition() {
+      const track = document.querySelector('.track');
+      const trackWidth = track.offsetWidth - motor.offsetWidth - 20;
+      const percent = total / max;
+      const newPosition = Math.min(percent * trackWidth, trackWidth);
+
+      motor.style.left = `${newPosition}px`;
+      progressFill.style.width = `${percent * 100}%`;
+
+      counter.textContent = `Toplam Tasarruf: ${total.toLocaleString()} TL`;
+
+      const tamam = Math.round(percent * 100);
+      const kalan = 100 - tamam;
+      progressInfo.textContent = `%${tamam} tamamlandı - %${kalan} kaldı`;
+
+      // Finish çizgisi glow efekti
+      updateFinishGlow(percent);
+
+      motor.classList.add("animate");
+      const speed = 2 - percent * 1.5;
+      motor.style.animationDuration = `${Math.max(speed, 0.2)}s`;
+
+      clearInterval(smokeInterval);
+      clearInterval(dustInterval);
+      if(total < max) {
+        startSmoke();
+        startDust();
+      } else {
+        clearInterval(smokeInterval);
+        clearInterval(dustInterval);
+        showConfetti();
+        
+        // Tebrik mesajını geciktirerek göster
+        setTimeout(() => {
+          alert("🏁 Tebrikler! 160.000 TL tasarruf hedefine ulaştın! 🎉");
+        }, 800);
+      }
+    }
+
+    // Finish çizgisi glow kontrolü
+    function updateFinishGlow(percent) {
+      const finishLine = document.querySelector('.finish-line');
+      if (percent > 0.8) {
+        const glowIntensity = (percent - 0.8) / 0.2; // 0-1 arası
+        finishLine.style.boxShadow = `0 0 ${8 + 15 * glowIntensity}px #ff4c4caa inset`;
+      } else {
+        finishLine.style.boxShadow = '0 0 6px #fff8 inset';
+      }
+    }
+
+    // Duman efekti yarat
+    function createSmoke(motorElement) {
+      const smoke = document.createElement("div");
+      smoke.classList.add("smoke");
+
+      const motorLeft = motorElement.offsetLeft;
+      const motorTop = motorElement.offsetTop;
+
+      smoke.style.left = `${motorLeft + 8}px`;
+      smoke.style.top = `${motorTop + 45}px`;
+
+      document.querySelector(".track").appendChild(smoke);
+
+      setTimeout(() => {
+        smoke.remove();
+      }, 1200);
+    }
+
+    // Toz efekti yarat
+    function createDust(motorElement) {
+      const dust = document.createElement("div");
+      dust.classList.add("dust");
+
+      const motorLeft = motorElement.offsetLeft;
+      const motorTop = motorElement.offsetTop;
+
+      dust.style.left = `${motorLeft + 35}px`;
+      dust.style.top = `${motorTop + 65}px`;
+
+      document.querySelector(".track").appendChild(dust);
+
+      setTimeout(() => {
+        dust.remove();
+      }, 1500);
+    }
+
+    // Duman başlat
+    function startSmoke() {
+      smokeInterval = setInterval(() => {
+        createSmoke(motor);
+      }, Math.max(200, 800 - (total / max) * 600));
+    }
+
+    // Toz başlat
+    function startDust() {
+      dustInterval = setInterval(() => {
+        createDust(motor);
+      }, Math.max(300, 1000 - (total / max) * 800));
+    }
+
+    function resetProgress() {
+      if(confirm("Tüm ilerlemeyi sıfırlamak istediğine emin misin?")) {
+        total = 0;
+        localStorage.removeItem('motorTotal');
+        updatePosition();
+        motor.classList.remove("animate");
+        clearInterval(smokeInterval);
+        clearInterval(dustInterval);
+      }
+    }
+    
+    function showConfetti() {
+      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+      const count = 200;
+      const container = document.querySelector('.container');
+      
+      for (let i = 0; i < count; i++) {
+        const confetti = document.createElement('div');
+        confetti.style.position = 'fixed';
+        confetti.style.width = '10px';
+        confetti.style.height = '10px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = '50%';
+        confetti.style.top = '-20px';
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.opacity = '0.8';
+        confetti.style.zIndex = '9999';
+        confetti.style.pointerEvents = 'none';
+        
+        container.appendChild(confetti);
+        
+        const animation = confetti.animate([
+          { transform: `translateY(0) rotate(0deg)`, opacity: 0.8 },
+          { transform: `translateY(${window.innerHeight + 100}px) rotate(${360 * (Math.random() > 0.5 ? 1 : -1)}deg)`, opacity: 0 }
+        ], {
+          duration: 3000 + Math.random() * 3000,
+          easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+        });
+        
+        animation.onfinish = () => {
+          confetti.remove();
+        };
+      }
+    }
+  </script>
+
+</body>
+</html>
