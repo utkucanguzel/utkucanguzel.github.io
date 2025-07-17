@@ -4,9 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Tasarruf Yarışı</title>
-
+  
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Racing+Sans+One&display=swap" rel="stylesheet" />
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
   <style>
     * {
@@ -17,7 +25,7 @@
 
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to bottom, #000010, #0d0c1a, #1a1440);
+      background: linear-gradient(135deg, #0c0b1d, #1a1440, #2c1a5e);
       background-attachment: fixed;
       background-repeat: no-repeat;
       text-align: center;
@@ -37,9 +45,12 @@
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: radial-gradient(white 1px, transparent 1px);
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(231, 76, 60, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(52, 152, 219, 0.1) 0%, transparent 40%),
+        radial-gradient(white 1px, transparent 1px);
       background-size: 3px 3px;
-      opacity: 0.04;
+      opacity: 0.08;
       z-index: 0;
       pointer-events: none;
     }
@@ -50,40 +61,126 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      z-index: 2;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
     }
 
     h1 {
-      margin: 15px 0;
-      font-size: 32px;
-      color: #e74c3c;
-      text-shadow: 0 0 6px #e74c3caa;
-      padding: 0 15px;
-      line-height: 1.3;
+      font-family: 'Racing Sans One', cursive;
+      font-size: 42px;
+      color: #fff;
+      text-shadow: 
+        0 0 10px #e74c3c,
+        0 0 20px #e74c3c,
+        0 0 30px #e74c3c;
+      margin: 20px 0 10px;
+      letter-spacing: 2px;
+      background: linear-gradient(to right, #ff6b6b, #ff8e53);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      display: inline-block;
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 10%;
+      width: 80%;
+      height: 4px;
+      background: linear-gradient(to right, transparent, #ff6b6b, transparent);
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    .goal-info {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+      border-radius: 20px;
+      padding: 20px;
+      margin: 20px 0;
+      width: 100%;
+      max-width: 500px;
+      font-size: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .goal-info::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      animation: shine 3s infinite;
+    }
+    
+    @keyframes shine {
+      100% {
+        left: 150%;
+      }
+    }
+    
+    .goal-info span {
+      color: #ffd700;
+      font-weight: 700;
+      font-size: 24px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
     }
 
     .track-container {
       width: 100%;
       margin: 30px 0;
       padding: 0 15px;
+      position: relative;
+    }
+    
+    .mountains {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      background: 
+        linear-gradient(to bottom, transparent 20%, #1d1a3a 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20"><path d="M0,20 L10,10 L20,15 L30,5 L40,12 L50,3 L60,8 L70,0 L80,7 L90,2 L100,10 L100,20 L0,20 Z" fill="%23231e3e"/></svg>');
+      background-size: auto 100%;
+      background-repeat: repeat-x;
+      z-index: 1;
+      opacity: 0.8;
     }
 
     .track {
       position: relative;
-      height: 120px;
-      background: repeating-linear-gradient(
-        90deg,
-        #2c2c2c 0px,
-        #2c2c2c 10px,
-        #2a2a2a 10px,
-        #2a2a2a 20px
-      );
+      height: 150px;
+      background: 
+        linear-gradient(to bottom, #1c1c1c, #141414),
+        repeating-linear-gradient(
+          90deg,
+          #2c2c2c 0px,
+          #2c2c2c 10px,
+          #2a2a2a 10px,
+          #2a2a2a 20px
+        );
       border-radius: 20px;
       width: 100%;
       box-shadow:
-        0 0 25px rgba(255, 255, 255, 0.05),
-        inset 0 0 20px rgba(255, 255, 255, 0.07),
-        inset 0 0 60px rgba(255, 0, 0, 0.04);
+        0 10px 30px rgba(0,0,0,0.5),
+        inset 0 0 30px rgba(255, 255, 255, 0.1),
+        inset 0 0 80px rgba(255, 0, 0, 0.1);
       overflow: hidden;
+      border: 2px solid #333;
+      z-index: 2;
     }
 
     .track::before{
@@ -92,38 +189,39 @@
       top: 50%;
       left: 0;
       width: 100%;
-      height: 4px;
+      height: 6px;
       background: repeating-linear-gradient(
         to right,
-        yellow,
-        yellow 15px,
-        transparent 15px,
-        transparent 30px
+        #ffd700,
+        #ffd700 20px,
+        transparent 20px,
+        transparent 40px
       );
       transform: translateY(-50%);
       z-index: 1;
-      opacity: 0.4;
+      opacity: 0.6;
     }
 
     .motor {
       position: absolute;
       left: 0;
-      top: 15px;
-      width: 100px;
+      top: 10px;
+      width: 180px;
       transition: left 0.3s ease;
       z-index: 3;
-      filter: drop-shadow(0 5px 3px rgba(0,0,0,0.6));
+      filter: drop-shadow(0 10px 8px rgba(0,0,0,0.8));
+      transform-origin: bottom;
     }
     
     .motor::after{
       content: '';
       position: absolute;
       bottom: -8px;
-      left: 15px;
-      width: 70%;
-      height: 12px;
-      background: radial-gradient(ellipse at center, rgba(255, 50, 50, 0.4), transparent 80%);
-      filter: blur(3px);
+      left: 20px;
+      width: 80%;
+      height: 15px;
+      background: radial-gradient(ellipse at center, rgba(255, 50, 50, 0.6), transparent 80%);
+      filter: blur(5px);
       z-index: -1;
     }
 
@@ -134,34 +232,37 @@
     }
 
     @keyframes vibrate {
-      0% { transform: translate(0px, 0px); }
-      25% { transform: translate(1px, -1px); }
-      50% { transform: translate(-1px, 1px); }
-      75% { transform: translate(1px, 1px); }
-      100% { transform: translate(0px, 0px); }
+      0% { transform: translate(0px, 0px) rotate(0deg); }
+      25% { transform: translate(1px, -2px) rotate(0.5deg); }
+      50% { transform: translate(-1px, 1px) rotate(-0.5deg); }
+      75% { transform: translate(1px, 1px) rotate(0.5deg); }
+      100% { transform: translate(0px, 0px) rotate(0deg); }
     }
 
     /* Duman efekti */
     .smoke {
       position: absolute;
-      bottom: 0;
-      width: 18px;
-      height: 22px;
-      background: rgba(180, 180, 180, 0.3);
+      bottom: 5px;
+      width: 25px;
+      height: 30px;
+      background: rgba(200, 200, 200, 0.5);
       border-radius: 50%;
-      animation: smokeAnim 1.2s forwards;
+      animation: smokeAnim 1.5s forwards;
       z-index: 2;
-      filter: blur(1.2px);
-      opacity: 0.6;
+      filter: blur(2px);
+      opacity: 0.8;
     }
 
     @keyframes smokeAnim {
       0% {
-        transform: translateY(0) scale(1);
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0.8;
+      }
+      50% {
         opacity: 0.6;
       }
       100% {
-        transform: translateY(-50px) scale(2.5);
+        transform: translateY(-80px) translateX(10px) scale(3.5);
         opacity: 0;
       }
     }
@@ -169,24 +270,24 @@
     /* Toz efekti */
     .dust {
       position: absolute;
-      bottom: 10px;
-      width: 8px;
-      height: 8px;
-      background: rgba(200, 180, 140, 0.5);
+      bottom: 15px;
+      width: 12px;
+      height: 12px;
+      background: rgba(200, 180, 100, 0.7);
       border-radius: 50%;
-      filter: blur(1px);
+      filter: blur(1.5px);
       animation: dustAnim 1.5s forwards;
       z-index: 0;
-      opacity: 0.6;
+      opacity: 0.7;
     }
 
     @keyframes dustAnim {
       0% {
         transform: translateX(0) translateY(0) scale(1);
-        opacity: 0.6;
+        opacity: 0.7;
       }
       100% {
-        transform: translateX(-15px) translateY(-20px) scale(1.5);
+        transform: translateX(-30px) translateY(-40px) scale(2.5);
         opacity: 0;
       }
     }
@@ -197,221 +298,486 @@
       right: 0;
       top: 0;
       height: 100%;
-      width: 12px;
+      width: 15px;
       background: repeating-linear-gradient(
         45deg,
-        black,
-        black 5px,
-        white 5px,
-        white 10px
+        #000,
+        #000 7px,
+        #ffd700 7px,
+        #ffd700 14px
       );
       z-index: 4;
-      box-shadow: 0 0 6px #fff8 inset;
+      box-shadow: 0 0 15px #ffd700aa inset;
       border-radius: 0 20px 20px 0;
-      transition: box-shadow 0.4s ease;
+      transition: all 0.4s ease;
     }
 
     /* Input ve buton */
     .input-container {
       width: 100%;
-      max-width: 500px;
+      max-width: 600px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 20px;
       padding: 0 15px;
     }
 
-    input[type="number"] {
-      padding: 14px 16px;
+    .input-group {
       width: 100%;
-      font-size: 18px;
-      margin-bottom: 15px;
-      border-radius: 12px;
-      border: 2px solid #555;
-      background: #111;
-      color: #eee;
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    input[type="number"] {
+      padding: 18px 25px 18px 55px;
+      width: 100%;
+      font-size: 20px;
+      border-radius: 15px;
+      border: 2px solid #444;
+      background: rgba(20, 20, 30, 0.8);
+      color: #fff;
       transition: all 0.3s ease;
-      text-align: center;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
     }
     
     input[type="number"]:focus {
       outline: none;
-      border-color: #e74c3c;
-      box-shadow: 0 0 12px #e74c3caa;
+      border-color: #ff8e53;
+      box-shadow: 0 0 20px #ff6b6bcc;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 25px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #ff6b6b;
+      font-size: 24px;
     }
 
     .buttons-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 15px;
+      gap: 20px;
       width: 100%;
-      margin-top: 10px;
+      margin-top: 15px;
     }
 
     button {
-      padding: 16px 30px;
-      font-size: 18px;
-      background-color: #e74c3c;
+      padding: 18px 35px;
+      font-size: 20px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
       color: white;
       border: none;
-      border-radius: 12px;
+      border-radius: 15px;
       cursor: pointer;
       transition: all 0.3s ease;
       user-select: none;
       flex: 1;
-      min-width: 140px;
-      max-width: 220px;
+      min-width: 180px;
+      max-width: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #ff8e53, #ff6b6b);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
     }
     
     button:hover {
-      background-color: #ff4d4d;
-      box-shadow: 0 0 16px #ff4d4dbb;
-      transform: scale(1.05);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(255, 107, 107, 0.6);
+    }
+    
+    button:hover::before {
+      opacity: 1;
     }
     
     button:active {
-      box-shadow: inset 0 0 7px #b33535;
-      transform: scale(0.98);
+      transform: translateY(1px);
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
     }
 
     .counter {
-      margin-top: 20px;
-      font-size: 22px;
-      font-weight: 500;
+      margin-top: 25px;
+      font-size: 26px;
+      font-weight: 600;
       color: #fff;
-      text-shadow: 0 0 6px #0008;
-      padding: 0 15px;
+      text-shadow: 0 0 10px rgba(255, 107, 107, 0.7);
+      padding: 15px 30px;
+      background: rgba(30, 25, 60, 0.7);
+      border-radius: 15px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     }
 
     .progress-container {
       width: 100%;
-      max-width: 500px;
-      margin-top: 15px;
+      max-width: 600px;
+      margin-top: 20px;
       padding: 0 15px;
     }
 
     .progress-bar {
       width: 100%;
-      height: 16px;
-      background: #222;
-      border-radius: 8px;
+      height: 22px;
+      background: rgba(30, 30, 50, 0.7);
+      border-radius: 12px;
       overflow: hidden;
-      margin-top: 10px;
-      box-shadow: inset 0 0 5px rgba(0,0,0,0.5);
+      margin-top: 15px;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+      border: 2px solid rgba(255,255,255,0.1);
+      position: relative;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #e74c3c, #ff6b6b);
-      border-radius: 8px;
+      background: linear-gradient(90deg, #ff6b6b, #ffd700);
+      border-radius: 10px;
       width: 0%;
-      transition: width 0.5s ease;
-      box-shadow: 0 0 10px rgba(231, 76, 60, 0.5);
+      transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      animation: progressShine 2s infinite;
+    }
+    
+    @keyframes progressShine {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .progress-info {
-      margin-top: 10px;
-      font-size: 18px;
-      color: #bbb;
-      text-shadow: 0 0 3px #0005;
-      font-weight: 500;
-    }
-
-    .reset-btn {
-      margin-top: 25px;
-      background-color: #444;
-      padding: 14px 28px;
-      font-size: 17px;
-      border-radius: 12px;
-      user-select: none;
-      transition: all 0.3s ease;
-      border: none;
-      color: #eee;
-      cursor: pointer;
-      max-width: 300px;
-    }
-    
-    .reset-btn:hover {
-      background-color: #666;
-    }
-    
-    .reset-btn:active {
-      background-color: #333;
-    }
-
-    .goal-info {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 15px;
-      margin: 15px 0;
-      width: 100%;
-      max-width: 500px;
-      font-size: 18px;
-    }
-    
-    .goal-info span {
-      color: #ff6b6b;
+      margin-top: 15px;
+      font-size: 22px;
+      color: #ffd700;
+      text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
       font-weight: 600;
     }
 
+    .reset-btn {
+      margin-top: 30px;
+      background: linear-gradient(135deg, #6c5ce7, #3498db);
+      padding: 16px 40px;
+      font-size: 20px;
+      border-radius: 15px;
+      user-select: none;
+      transition: all 0.3s ease;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      max-width: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+    
+    .reset-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #3498db, #6c5ce7);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+    
+    .reset-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(52, 152, 219, 0.6);
+    }
+    
+    .reset-btn:hover::before {
+      opacity: 1;
+    }
+    
+    .reset-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    }
+
+    /* Giriş Ekranı */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(10, 5, 30, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(10px);
+    }
+    
+    .login-container {
+      background: rgba(30, 25, 60, 0.95);
+      border-radius: 20px;
+      padding: 40px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 0 50px rgba(231, 76, 60, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .login-title {
+      font-family: 'Racing Sans One', cursive;
+      font-size: 36px;
+      color: #ff6b6b;
+      margin-bottom: 30px;
+      text-align: center;
+      text-shadow: 0 0 15px rgba(255, 107, 107, 0.7);
+    }
+    
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+    
+    .form-group {
+      position: relative;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 500;
+      color: #ddd;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 18px;
+      border-radius: 12px;
+      border: 2px solid #444;
+      background: rgba(20, 15, 40, 0.8);
+      color: #fff;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+    }
+    
+    .login-btn {
+      padding: 16px;
+      font-size: 20px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      box-shadow: 0 5px 20px rgba(255, 107, 107, 0.4);
+    }
+    
+    .login-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+    }
+    
+    .error-message {
+      color: #ff6b6b;
+      margin-top: 15px;
+      text-align: center;
+      min-height: 24px;
+      font-weight: 500;
+    }
+    
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      color: #aaa;
+    }
+    
+    .register-link a {
+      color: #ff6b6b;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    /* Arka plan ışık efektleri */
+    .light {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      z-index: 0;
+    }
+    
+    .light-1 {
+      width: 400px;
+      height: 400px;
+      background: rgba(231, 76, 60, 0.2);
+      top: -100px;
+      left: -100px;
+    }
+    
+    .light-2 {
+      width: 500px;
+      height: 500px;
+      background: rgba(52, 152, 219, 0.15);
+      bottom: -150px;
+      right: -100px;
+    }
+
     /* Responsive */
-    @media (min-width: 768px) {
+    @media (max-width: 768px) {
       h1 {
-        font-size: 42px;
-        margin: 30px 0;
+        font-size: 32px;
+      }
+      
+      .goal-info {
+        font-size: 18px;
+        padding: 15px;
       }
       
       .track {
-        height: 150px;
-        border-radius: 25px;
+        height: 120px;
       }
       
       .motor {
         width: 140px;
-        top: 10px;
-      }
-      
-      .input-container {
-        flex-direction: row;
-        gap: 15px;
+        top: 15px;
       }
       
       input[type="number"] {
-        width: 180px;
-        margin-bottom: 0;
+        padding: 15px 20px 15px 50px;
+        font-size: 18px;
       }
       
-      .buttons-container {
-        margin-top: 0;
-      }
-    }
-
-    @media (min-width: 992px) {
-      .motor {
-        width: 180px;
-        top: 1px;
+      .input-icon {
+        left: 20px;
+        font-size: 20px;
       }
       
-      button {
+      button, .reset-btn {
+        padding: 15px 25px;
+        font-size: 18px;
         min-width: 160px;
+      }
+      
+      .counter {
+        font-size: 22px;
+        padding: 12px 20px;
+      }
+      
+      .progress-info {
+        font-size: 20px;
+      }
+      
+      .login-container {
+        padding: 30px;
+      }
+      
+      .login-title {
+        font-size: 28px;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Hoşgeldin Gaye</h1>
+  <!-- Arka plan ışıkları -->
+  <div class="light light-1"></div>
+  <div class="light light-2"></div>
+  
+  <!-- Giriş Ekranı -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-container">
+      <h2 class="login-title"><i class="fas fa-motorcycle"></i> TASARRUF YARIŞI</h2>
+      <p style="text-align: center; margin-bottom: 30px; color: #aaa;">Hedefinize ulaşmak için giriş yapın</p>
+      
+      <form class="login-form" id="loginForm">
+        <div class="form-group">
+          <label for="email">E-posta</label>
+          <input type="email" id="email" placeholder="E-posta adresiniz" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Şifre</label>
+          <input type="password" id="password" placeholder="Şifreniz" required>
+        </div>
+        
+        <button type="submit" class="login-btn">
+          <i class="fas fa-sign-in-alt"></i> Giriş Yap
+        </button>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <div class="register-link">
+          Hesabınız yok mu? <a href="#" id="registerLink">Kayıt Ol</a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Uygulama İçeriği (Başlangıçta gizli) -->
+  <div class="container" id="appContainer" style="display: none;">
+    <div class="header">
+      <h1><i class="fas fa-trophy"></i> Hoşgeldin <span id="userName">Gaye</span></h1>
+    </div>
+
+    <div class="goal-info">
+      <i class="fas fa-flag-checkered"></i> HEDEF: <span>160.000 TL</span> - Motoru bitiş çizgisine ulaştırmak için tasarrufunu ekle!
+    </div>
 
     <div class="track-container">
+      <div class="mountains"></div>
       <div class="track">
         <img src="https://freepngimg.com/thumb/motorcycle/16-red-moto-png-image-red-motorcycle-png-.png" alt="motor" class="motor" id="motor" />
         <div class="finish-line"></div>
       </div>
     </div>
 
-    <div class="counter" id="counter">Biriken tutar: 0 TL</div>
+    <div class="counter" id="counter">
+      <i class="fas fa-coins"></i> Toplam Tasarruf: 0 TL
+    </div>
     
     <div class="progress-container">
       <div class="progress-bar">
@@ -421,17 +787,47 @@
     </div>
 
     <div class="input-container">
-      <input type="number" id="amount" placeholder="" inputmode="numeric" />
+      <div class="input-group">
+        <i class="fas fa-money-bill-wave input-icon"></i>
+        <input type="number" id="amount" placeholder="Miktar gir" inputmode="numeric" />
+      </div>
       
       <div class="buttons-container">
-        <button onclick="moveMotor()">Tasarruf Ekle</button>
+        <button onclick="moveMotor()">
+          <i class="fas fa-paper-plane"></i> Tasarruf Ekle
+        </button>
       </div>
     </div>
 
-    <button class="reset-btn" onclick="resetProgress()">Sıfırla</button>
+    <button class="reset-btn" onclick="resetProgress()">
+      <i class="fas fa-sync-alt"></i> Sıfırla
+    </button>
+    
+    <div style="margin-top: 30px; display: flex; gap: 15px;">
+      <button onclick="logout()" style="background: linear-gradient(135deg, #6c5ce7, #3498db); min-width: 120px;">
+        <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+      </button>
+    </div>
   </div>
 
   <script>
+    // Firebase yapılandırması
+    const firebaseConfig = {
+      apiKey: "AIzaSyDfcO4f5L15hrBBtUtSyQQb43CClOfIpyo",
+      authDomain: "testmail-c1ec6.firebaseapp.com",
+      projectId: "testmail-c1ec6",
+      storageBucket: "testmail-c1ec6.firebasestorage.app",
+      messagingSenderId: "732807884366",
+      appId: "1:732807884366:web:071c8c9628e4bb81f95d1f",
+      measurementId: "G-CLWNYE625K"
+    };
+
+    // Firebase'i başlat
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Uygulama değişkenleri
     const max = 160000;
     const motor = document.getElementById('motor');
     const counter = document.getElementById('counter');
@@ -439,52 +835,157 @@
     const progressFill = document.getElementById('progressFill');
     let smokeInterval = null;
     let dustInterval = null;
+    let total = 0;
+    let currentUser = null;
 
-    // localStorage'dan yükle (varsa)
-    let total = parseInt(localStorage.getItem('motorTotal')) || 0;
+    // DOM elemanları
+    const loginOverlay = document.getElementById('loginOverlay');
+    const appContainer = document.getElementById('appContainer');
+    const loginForm = document.getElementById('loginForm');
+    const errorMessage = document.getElementById('errorMessage');
+    const registerLink = document.getElementById('registerLink');
+    const userNameElement = document.getElementById('userName');
 
-    // Sayfa yüklendiğinde pozisyonu güncelle
-    window.onload = () => {
-      updatePosition();
-      if(total > 0) {
-        motor.classList.add("animate");
-        startSmoke();
-        startDust();
+    // Sayfa yüklendiğinde kullanıcı durumunu kontrol et
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        // Kullanıcı giriş yapmış
+        currentUser = user;
+        userNameElement.textContent = user.displayName || user.email.split('@')[0];
+        loginOverlay.style.display = 'none';
+        appContainer.style.display = 'flex';
+        loadUserData();
+      } else {
+        // Kullanıcı giriş yapmamış
+        loginOverlay.style.display = 'flex';
+        appContainer.style.display = 'none';
+      }
+    });
+
+    // Giriş formu
+    loginForm.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          // Giriş başarılı
+          errorMessage.textContent = '';
+        })
+        .catch(error => {
+          // Giriş hatası
+          errorMessage.textContent = 'Hatalı e-posta veya şifre!';
+          console.error('Giriş hatası:', error);
+        });
+    });
+
+    // Kayıt bağlantısı
+    registerLink.addEventListener('click', e => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      if (!email || !password) {
+        errorMessage.textContent = 'Lütfen e-posta ve şifre giriniz!';
+        return;
       }
       
-      // Inputa otomatik odaklan
-      setTimeout(() => {
-        document.getElementById('amount').focus();
-      }, 500);
-    };
+      auth.createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          // Kayıt başarılı
+          errorMessage.textContent = '';
+          // Kullanıcı verilerini oluştur
+          saveUserData(0);
+        })
+        .catch(error => {
+          // Kayıt hatası
+          errorMessage.textContent = 'Kayıt sırasında bir hata oluştu!';
+          console.error('Kayıt hatası:', error);
+        });
+    });
+
+    // Kullanıcı verilerini yükle
+    function loadUserData() {
+      if (!currentUser) return;
+      
+      const userRef = db.collection('users').doc(currentUser.uid);
+      userRef.get().then(doc => {
+        if (doc.exists) {
+          const userData = doc.data();
+          total = userData.total || 0;
+          updatePosition();
+          
+          if (total > 0) {
+            motor.classList.add("animate");
+            startSmoke();
+            startDust();
+          }
+        } else {
+          // Kullanıcı verisi yok, oluştur
+          saveUserData(0);
+        }
+        
+        // Inputa odaklan
+        setTimeout(() => {
+          document.getElementById('amount').focus();
+        }, 500);
+      }).catch(error => {
+        console.error('Veri yükleme hatası:', error);
+      });
+    }
+
+    // Kullanıcı verilerini kaydet
+    function saveUserData(totalValue) {
+      if (!currentUser) return;
+      
+      const userRef = db.collection('users').doc(currentUser.uid);
+      userRef.set({
+        total: totalValue,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(error => {
+        console.error('Veri kaydetme hatası:', error);
+      });
+    }
+
+    // Çıkış yap
+    function logout() {
+      auth.signOut().then(() => {
+        // Çıkış başarılı
+        currentUser = null;
+        total = 0;
+      }).catch(error => {
+        console.error('Çıkış hatası:', error);
+      });
+    }
 
     function moveMotor() {
       const input = document.getElementById('amount');
       let value = parseInt(input.value);
 
       if (!isNaN(value) && value > 0) {
+        // Para animasyonu
+        createMoneyAnimation(value);
+        
         total += value;
-        if(total > max) total = max; // sınırla
+        if (total > max) total = max; // sınırla
 
-        localStorage.setItem('motorTotal', total); // kaydet
+        // Firestore'a kaydet
+        saveUserData(total);
 
         updatePosition();
         input.value = "";
       } else {
         // Geçersiz giriş uyarısı
         input.style.borderColor = "#ff0000";
-        input.style.boxShadow = "0 0 12px rgba(255, 0, 0, 0.5)";
+        input.style.boxShadow = "0 0 15px rgba(255, 0, 0, 0.6)";
         setTimeout(() => {
-          input.style.borderColor = "#555";
-          input.style.boxShadow = "none";
+          input.style.borderColor = "#444";
+          input.style.boxShadow = "0 5px 15px rgba(0,0,0,0.3)";
         }, 1000);
       }
-    }
-    
-    function addRandomAmount() {
-      const randomAmount = Math.floor(Math.random() * 10000) + 1000;
-      document.getElementById('amount').value = randomAmount;
-      moveMotor();
     }
 
     function updatePosition() {
@@ -496,7 +997,7 @@
       motor.style.left = `${newPosition}px`;
       progressFill.style.width = `${percent * 100}%`;
 
-      counter.textContent = `Toplam Tasarruf: ${total.toLocaleString()} TL`;
+      counter.innerHTML = `<i class="fas fa-coins"></i> Toplam Tasarruf: ${total.toLocaleString('tr-TR')} TL`;
 
       const tamam = Math.round(percent * 100);
       const kalan = 100 - tamam;
@@ -511,7 +1012,7 @@
 
       clearInterval(smokeInterval);
       clearInterval(dustInterval);
-      if(total < max) {
+      if (total < max) {
         startSmoke();
         startDust();
       } else {
@@ -521,7 +1022,7 @@
         
         // Tebrik mesajını geciktirerek göster
         setTimeout(() => {
-          alert("🏁 Tebrikler! 160.000 TL tasarruf hedefine ulaştın! 🎉");
+          alert("🏆 TEBRİKLER! 160.000 TL TASARRUF HEDEFİNE ULAŞTIN! 🎉");
         }, 800);
       }
     }
@@ -531,9 +1032,9 @@
       const finishLine = document.querySelector('.finish-line');
       if (percent > 0.8) {
         const glowIntensity = (percent - 0.8) / 0.2; // 0-1 arası
-        finishLine.style.boxShadow = `0 0 ${8 + 15 * glowIntensity}px #ff4c4caa inset`;
+        finishLine.style.boxShadow = `0 0 ${10 + 20 * glowIntensity}px #ffd700aa inset`;
       } else {
-        finishLine.style.boxShadow = '0 0 6px #fff8 inset';
+        finishLine.style.boxShadow = '0 0 15px #ffd700aa inset';
       }
     }
 
@@ -545,14 +1046,14 @@
       const motorLeft = motorElement.offsetLeft;
       const motorTop = motorElement.offsetTop;
 
-      smoke.style.left = `${motorLeft + 8}px`;
-      smoke.style.top = `${motorTop + 45}px`;
+      smoke.style.left = `${motorLeft + 15}px`;
+      smoke.style.top = `${motorTop + 60}px`;
 
       document.querySelector(".track").appendChild(smoke);
 
       setTimeout(() => {
         smoke.remove();
-      }, 1200);
+      }, 1500);
     }
 
     // Toz efekti yarat
@@ -563,8 +1064,8 @@
       const motorLeft = motorElement.offsetLeft;
       const motorTop = motorElement.offsetTop;
 
-      dust.style.left = `${motorLeft + 35}px`;
-      dust.style.top = `${motorTop + 65}px`;
+      dust.style.left = `${motorLeft + 60}px`;
+      dust.style.top = `${motorTop + 85}px`;
 
       document.querySelector(".track").appendChild(dust);
 
@@ -588,9 +1089,9 @@
     }
 
     function resetProgress() {
-      if(confirm("Tüm ilerlemeyi sıfırlamak istediğine emin misin?")) {
+      if (confirm("Tüm ilerlemeyi sıfırlamak istediğine emin misin?")) {
         total = 0;
-        localStorage.removeItem('motorTotal');
+        saveUserData(total);
         updatePosition();
         motor.classList.remove("animate");
         clearInterval(smokeInterval);
@@ -598,40 +1099,87 @@
       }
     }
     
+    // Para animasyonu
+    function createMoneyAnimation(amount) {
+      const input = document.getElementById('amount');
+      const inputRect = input.getBoundingClientRect();
+      const counterRect = counter.getBoundingClientRect();
+      
+      const moneyCount = Math.min(amount / 500, 10); // Maksimum 10 para
+      
+      for (let i = 0; i < moneyCount; i++) {
+        const coin = document.createElement('div');
+        coin.innerHTML = '<i class="fas fa-coins"></i>';
+        coin.style.position = 'fixed';
+        coin.style.left = `${inputRect.left + inputRect.width/2}px`;
+        coin.style.top = `${inputRect.top + inputRect.height/2}px`;
+        coin.style.fontSize = '24px';
+        coin.style.color = '#ffd700';
+        coin.style.opacity = '0';
+        coin.style.zIndex = '1000';
+        coin.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        document.body.appendChild(coin);
+        
+        // Animasyon başlat
+        setTimeout(() => {
+          coin.style.opacity = '1';
+          coin.style.transform = `translate(${Math.random() * 100 - 50}px, ${Math.random() * -100 - 50}px)`;
+          
+          setTimeout(() => {
+            coin.style.left = `${counterRect.left + counterRect.width/2}px`;
+            coin.style.top = `${counterRect.top + counterRect.height/2}px`;
+            coin.style.fontSize = '16px';
+            coin.style.opacity = '0.3';
+            
+            setTimeout(() => {
+              coin.remove();
+            }, 800);
+          }, 300);
+        }, i * 100);
+      }
+    }
+    
     function showConfetti() {
-      const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
-      const count = 200;
+      const colors = ['#ff6b6b', '#ffd700', '#6c5ce7', '#00cec9', '#fd79a8', '#00b894'];
+      const count = 300;
       const container = document.querySelector('.container');
       
       for (let i = 0; i < count; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
-        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = '50%';
-        confetti.style.top = '-20px';
-        confetti.style.left = `${Math.random() * 100}%`;
-        confetti.style.opacity = '0.8';
-        confetti.style.zIndex = '9999';
-        confetti.style.pointerEvents = 'none';
-        
-        container.appendChild(confetti);
-        
-        const animation = confetti.animate([
-          { transform: `translateY(0) rotate(0deg)`, opacity: 0.8 },
-          { transform: `translateY(${window.innerHeight + 100}px) rotate(${360 * (Math.random() > 0.5 ? 1 : -1)}deg)`, opacity: 0 }
-        ], {
-          duration: 3000 + Math.random() * 3000,
-          easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
-        });
-        
-        animation.onfinish = () => {
-          confetti.remove();
-        };
+        setTimeout(() => {
+          const confetti = document.createElement('div');
+          confetti.innerHTML = '<i class="fas fa-star"></i>';
+          confetti.style.position = 'fixed';
+          confetti.style.fontSize = '24px';
+          confetti.style.color = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.top = '-30px';
+          confetti.style.left = `${Math.random() * 100}%`;
+          confetti.style.opacity = '0.8';
+          confetti.style.zIndex = '9999';
+          confetti.style.pointerEvents = 'none';
+          confetti.style.textShadow = '0 0 5px rgba(255,255,255,0.8)';
+          
+          container.appendChild(confetti);
+          
+          const animation = confetti.animate([
+            { 
+              transform: `translate(0, 0) rotate(0deg) scale(1)`,
+              opacity: 0.8 
+            },
+            { 
+              transform: `translate(${Math.random() * 200 - 100}px, ${window.innerHeight + 100}px) rotate(${360 * (Math.random() > 0.5 ? 1 : -1)}deg) scale(0.5)`, 
+              opacity: 0 
+            }
+          ], {
+            duration: 3000 + Math.random() * 3000,
+            easing: 'cubic-bezier(0.1, 0.8, 0.2, 1)'
+          });
+          
+          animation.onfinish = () => {
+            confetti.remove();
+          };
+        }, i * 20);
       }
     }
   </script>
-
 </body>
 </html>
